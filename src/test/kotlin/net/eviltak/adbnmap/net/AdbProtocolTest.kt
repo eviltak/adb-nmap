@@ -26,11 +26,18 @@ class AdbProtocolTest {
             it.getInputStream().read(inBuffer)
 
             val cmd = ByteBuffer.wrap(inBuffer).order(ByteOrder.LITTLE_ENDIAN).int
-            assertEquals(0x48545541, cmd)
+            assertEquals("Invalid command returned", 0x48545541, cmd)
         }
     }
 
     @Test
     fun verifyHostUsesProtocolTest() {
+        Socket().use {
+            it.connect(InetSocketAddress("192.168.49.104", 5555), 500)
+
+            val protocol = AdbProtocol()
+
+           assertTrue(protocol.verifyHostUsesProtocol(it))
+        }
     }
 }
