@@ -1,11 +1,13 @@
 package net.eviltak.adbnmap.net
 
-import java.net.Socket
+import java.net.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**
  * The protocol used for communication between the ADB server and the target device's adbd daemon.
+ *
+ * https://github.com/android/platform_system_core/blob/master/adb/protocol.txt
  */
 class AdbProtocol : Protocol {
     companion object {
@@ -55,14 +57,25 @@ class AdbProtocol : Protocol {
     override fun verifyHostUsesProtocol(socket: Socket): Boolean {
         sendTestMessage(socket)
 
-        val inBuffer = ByteArray(HEADER_SIZE)
+        val inArray = ByteArray(HEADER_SIZE)
 
-        socket.getInputStream().read(inBuffer)
+        try {
+            // TODO: Convert to modifiable option
+            socket.soTimeout = 10
+            socket.getInputStream().read(inArray)
+        }
+        catch (_: SocketTimeoutException) {
+            return false
+        }
 
-        // TODO: Add magic value test
+        val inBuffer = ByteBuffer.wrap(inArray).order(ByteOrder.LITTLE_ENDIAN)
 
-        val cmd = ByteBuffer.wrap(inBuffer).order(ByteOrder.LITTLE_ENDIAN).int
+        val command = inBuffer.int
 
-        return COMMANDS.containsValue(cmd)
+        // Read last integer
+        inBuffer.position(HEADER_SIZE - 4)
+        val magic = inBuffer.int
+
+        return COMMANDS.containsValue(command) && (command xor magic == -1)
     }
 }

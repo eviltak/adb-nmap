@@ -15,7 +15,8 @@ interface Protocol {
     fun sendTestMessage(socket: Socket)
 
     /**
-     * Verify that the host the [socket] is connected to uses this communication protocol.
+     * Verify that the host the [socket] is connected to uses this communication protocol. An implementation would
+     * ideally use [sendTestMessage] and listen for a valid response.
      *
      * @param socket The socket connected to the host.
      *

@@ -37,7 +37,7 @@ class AdbProtocolTest {
 
             val protocol = AdbProtocol()
 
-           assertTrue(protocol.verifyHostUsesProtocol(it))
+           assertTrue("verifyHostUsesProtocol returned false", protocol.verifyHostUsesProtocol(it))
         }
     }
 }
