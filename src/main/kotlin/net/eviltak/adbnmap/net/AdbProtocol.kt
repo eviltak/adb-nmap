@@ -48,13 +48,13 @@ class AdbProtocol : Protocol {
     }
 
     /**
-     * Verify that the host the [socket] is connected to uses this communication protocol.
+     * Check if the host the [socket] is connected to uses this communication protocol.
      *
      * @param socket The socket connected to the host.
      *
      * @return true if the connected host uses this protocol, false otherwise.
      */
-    override fun verifyHostUsesProtocol(socket: Socket): Boolean {
+    override fun hostUsesProtocol(socket: Socket): Boolean {
         sendTestMessage(socket)
 
         val inArray = ByteArray(HEADER_SIZE)

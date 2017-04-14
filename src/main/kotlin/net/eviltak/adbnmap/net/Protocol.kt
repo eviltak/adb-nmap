@@ -15,12 +15,12 @@ interface Protocol {
     fun sendTestMessage(socket: Socket)
 
     /**
-     * Verify that the host the [socket] is connected to uses this communication protocol. An implementation would
+     * Check if the host the [socket] is connected to uses this communication protocol. An implementation would
      * ideally use [sendTestMessage] and listen for a valid response.
      *
      * @param socket The socket connected to the host.
      *
      * @return true if the connected host uses this protocol, false otherwise.
      */
-    fun verifyHostUsesProtocol(socket: Socket): Boolean
+    fun hostUsesProtocol(socket: Socket): Boolean
 }

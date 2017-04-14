@@ -21,7 +21,7 @@ class AdbProtocolTest {
             protocol.sendTestMessage(it)
 
             // Basic response test to check whether test message was correct
-            // Comprehensive verification is performed by Protocol.verifyHostUsesProtocol
+            // Comprehensive verification is performed by Protocol.hostUsesProtocol
             val inBuffer = ByteArray(128)
             it.getInputStream().read(inBuffer)
 
@@ -37,7 +37,7 @@ class AdbProtocolTest {
 
             val protocol = AdbProtocol()
 
-           assertTrue("verifyHostUsesProtocol returned false", protocol.verifyHostUsesProtocol(it))
+           assertTrue("hostUsesProtocol returned false", protocol.hostUsesProtocol(it))
         }
     }
 }
