@@ -61,7 +61,7 @@ class AdbProtocol : Protocol {
 
         try {
             // TODO: Convert to modifiable option
-            socket.soTimeout = 10
+            socket.soTimeout = 500
             socket.getInputStream().read(inArray)
         }
         catch (_: SocketTimeoutException) {

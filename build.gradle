@@ -20,5 +20,6 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    testCompile "junit:junit:4.12"
+    testCompile "junit:junit:4.+"
+    testCompile "org.mockito:mockito-core:2.+"
 }
