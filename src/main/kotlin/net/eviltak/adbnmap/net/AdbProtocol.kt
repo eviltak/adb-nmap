@@ -1,6 +1,7 @@
 package net.eviltak.adbnmap.net
 
-import java.net.*
+import java.net.Socket
+import java.net.SocketTimeoutException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -16,7 +17,7 @@ class AdbProtocol : Protocol {
          */
         const val HEADER_SIZE = 24
 
-        private val COMMANDS = mapOf(
+        private val COMMAND_CONSTANTS = mapOf(
                 "A_SYNC" to 0x434e5953,
                 "A_CNXN" to 0x4e584e43,
                 "A_AUTH" to 0x48545541,
@@ -37,12 +38,12 @@ class AdbProtocol : Protocol {
         val outBuffer = ByteBuffer.allocate(4 * 6).order(ByteOrder.LITTLE_ENDIAN)
 
         // TODO: Refactor into an AdbMessage class if needed
-        outBuffer.putInt(0x4e584e43)            // command: A_CNXN
-        outBuffer.putInt(0x01000000)            // arg0:    version
-        outBuffer.putInt(256 * 1024)            // arg1:    maxdata
-        outBuffer.putInt(0)                     // data_length
-        outBuffer.putInt(0)                     // data_checksum
-        outBuffer.putInt(0x4e584e43 xor -1)     // magic (command ^ 0xffffffff)
+        outBuffer.putInt(COMMAND_CONSTANTS["A_CNXN"]!!)             // command: A_CNXN
+        outBuffer.putInt(0x01000000)                                // arg0:    version
+        outBuffer.putInt(256 * 1024)                                // arg1:    maxdata
+        outBuffer.putInt(0)                                         // data_length
+        outBuffer.putInt(0)                                         // data_checksum
+        outBuffer.putInt(COMMAND_CONSTANTS["A_CNXN"]!! xor -1)      // magic (command ^ 0xffffffff)
 
         socket.getOutputStream().write(outBuffer.array())
     }
@@ -76,6 +77,6 @@ class AdbProtocol : Protocol {
         inBuffer.position(HEADER_SIZE - 4)
         val magic = inBuffer.int
 
-        return COMMANDS.containsValue(command) && (command xor magic == -1)
+        return COMMAND_CONSTANTS.containsValue(command) && (command xor magic == -1)
     }
 }
