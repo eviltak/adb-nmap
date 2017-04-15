@@ -10,7 +10,7 @@ import java.nio.ByteOrder
  *
  * https://github.com/android/platform_system_core/blob/master/adb/protocol.txt
  */
-class AdbProtocol : Protocol {
+class AdbTransportProtocol(override val socket: Socket) : Protocol {
     companion object {
         /**
          * The header size in bytes.
@@ -34,7 +34,7 @@ class AdbProtocol : Protocol {
      *
      * @param socket The socket connected to the host to which to send the test message.
      */
-    override fun sendTestMessage(socket: Socket) {
+    override fun sendTestMessage() {
         val outBuffer = ByteBuffer.allocate(4 * 6).order(ByteOrder.LITTLE_ENDIAN)
 
         // TODO: Refactor into an AdbMessage class if needed
@@ -55,8 +55,8 @@ class AdbProtocol : Protocol {
      *
      * @return true if the connected host uses this protocol, false otherwise.
      */
-    override fun hostUsesProtocol(socket: Socket): Boolean {
-        sendTestMessage(socket)
+    override fun hostUsesProtocol(): Boolean {
+        sendTestMessage()
 
         val inArray = ByteArray(HEADER_SIZE)
 

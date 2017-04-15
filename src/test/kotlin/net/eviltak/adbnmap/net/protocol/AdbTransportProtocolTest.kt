@@ -13,7 +13,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 @RunWith(Enclosed::class)
-class AdbProtocolTest {
+class AdbTransportProtocolTest {
     class SendTestMessage {
         @Test
         fun sendTestMessageTest() {
@@ -23,8 +23,8 @@ class AdbProtocolTest {
                 on { getOutputStream() } doReturn byteArrayOutputStream
             }
 
-            val adbProtocol = AdbProtocol()
-            adbProtocol.sendTestMessage(mockedSocket)
+            val adbProtocol = AdbTransportProtocol(mockedSocket)
+            adbProtocol.sendTestMessage()
 
             val expectedBuffer = ByteBuffer.allocate(4 * 6).order(ByteOrder.LITTLE_ENDIAN)
 
@@ -61,9 +61,9 @@ class AdbProtocolTest {
                 on { getOutputStream() } doReturn byteArrayOutputStream
             }
 
-            val adbProtocol = AdbProtocol()
+            val adbProtocol = AdbTransportProtocol(mockedSocket)
 
-            assertTrue("hostUsesProtocol returned false", adbProtocol.hostUsesProtocol(mockedSocket))
+            assertTrue("hostUsesProtocol returned false", adbProtocol.hostUsesProtocol())
         }
 
         @Test
@@ -81,9 +81,9 @@ class AdbProtocolTest {
                 on { getOutputStream() } doReturn byteArrayOutputStream
             }
 
-            val adbProtocol = AdbProtocol()
+            val adbProtocol = AdbTransportProtocol(mockedSocket)
 
-            assertFalse("hostUsesProtocol returned true", adbProtocol.hostUsesProtocol(mockedSocket))
+            assertFalse("hostUsesProtocol returned true", adbProtocol.hostUsesProtocol())
         }
 
         @Test
@@ -104,9 +104,9 @@ class AdbProtocolTest {
                 on { getOutputStream() } doReturn byteArrayOutputStream
             }
 
-            val adbProtocol = AdbProtocol()
+            val adbProtocol = AdbTransportProtocol(mockedSocket)
 
-            assertFalse("hostUsesProtocol returned true", adbProtocol.hostUsesProtocol(mockedSocket))
+            assertFalse("hostUsesProtocol returned true", adbProtocol.hostUsesProtocol())
         }
 
         @Test
@@ -123,9 +123,9 @@ class AdbProtocolTest {
                 on { getOutputStream() } doReturn byteArrayOutputStream
             }
 
-            val adbProtocol = AdbProtocol()
+            val adbProtocol = AdbTransportProtocol(mockedSocket)
 
-            assertFalse("hostUsesProtocol returned true", adbProtocol.hostUsesProtocol(mockedSocket))
+            assertFalse("hostUsesProtocol returned true", adbProtocol.hostUsesProtocol())
         }
     }
 }
