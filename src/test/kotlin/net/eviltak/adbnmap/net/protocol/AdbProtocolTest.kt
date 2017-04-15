@@ -1,4 +1,4 @@
-package net.eviltak.adbnmap.net
+package net.eviltak.adbnmap.net.protocol
 
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.assertFalse
@@ -111,8 +111,6 @@ class AdbProtocolTest {
 
         @Test
         fun dataReceiveTimeoutTest() {
-            val inputBuffer = ByteBuffer.allocate(0).order(ByteOrder.LITTLE_ENDIAN)
-
             val blockingInputStream = mock<InputStream> {
                 on { read(any()) } doAnswer doAnswer@ {
                     throw SocketTimeoutException()

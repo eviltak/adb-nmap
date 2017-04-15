@@ -1,4 +1,4 @@
-package net.eviltak.adbnmap.net
+package net.eviltak.adbnmap.net.protocol
 
 import java.net.Socket
 
