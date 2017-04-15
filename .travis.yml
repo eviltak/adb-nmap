@@ -1,4 +1,10 @@
 language: java
 
-jdk:
-  - openjdk8
+env:
+  - JDK=oraclejdk8
+  - JDK=openjdk8
+  
+dist: trusty
+
+before_script:
+  - jdk_switcher use $JDK
