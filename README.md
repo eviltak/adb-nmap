@@ -1,5 +1,5 @@
 # adb-nmap
-An ADB network device discovery and connection library with a CLI
+An ADB network device discovery and connection library
 
 [![Build Status](https://travis-ci.org/eviltak/adb-nmap.svg?branch=master)](https://travis-ci.org/eviltak/adb-nmap)
 

@@ -1,5 +1,6 @@
 package net.eviltak.adbnmap.net.protocol
 
+import net.eviltak.adbnmap.net.protocol.messages.AdbTransportMessage
 import java.net.Socket
 import java.net.SocketTimeoutException
 import java.nio.ByteBuffer
@@ -10,7 +11,7 @@ import java.nio.ByteOrder
  *
  * https://github.com/android/platform_system_core/blob/master/adb/protocol.txt
  */
-class AdbTransportProtocol(override val socket: Socket) : Protocol {
+class AdbTransportProtocol(override val socket: Socket) : Protocol<AdbTransportMessage> {
     companion object {
         /**
          * The header size in bytes.
@@ -35,7 +36,7 @@ class AdbTransportProtocol(override val socket: Socket) : Protocol {
     override fun sendTestMessage() {
         val outBuffer = ByteBuffer.allocate(4 * 6).order(ByteOrder.LITTLE_ENDIAN)
 
-        // TODO: Refactor into an AdbMessage class if needed
+        // TODO: Use AdbTransportMessage instead
         outBuffer.putInt(COMMAND_CONSTANTS["A_CNXN"]!!)             // command: A_CNXN
         outBuffer.putInt(0x01000000)                                // arg0:    version
         outBuffer.putInt(256 * 1024)                                // arg1:    maxdata
