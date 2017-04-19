@@ -20,11 +20,18 @@ package net.eviltak.adbnmap.net.protocol.messages
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
+/**
+ * Represents a message used for communication between the ADB server and remote device adbd daemon via the
+ * ADB transport protocol.
+ */
 class AdbTransportMessage
 private constructor(val command: Int, val arg0: Int, val arg1: Int, val dataLength: Int,
                     val dataChecksum: Int, val magic: Int, val payload: String)
     : Message {
 
+    /**
+     * The various commands that can be sent via the ADB transport protocol.
+     */
     enum class Command(val intValue: Int) {
         SYNC(0x434e5953),
         CNXN(0x4e584e43),
@@ -41,6 +48,13 @@ private constructor(val command: Int, val arg0: Int, val arg1: Int, val dataLeng
          */
         const val HEADER_SIZE = 24
 
+        /**
+         * Checks whether the data in [byteArray] represents an [AdbTransportMessage] or not.
+         * The data in [byteArray] must be stored in little endian format.
+         *
+         * @return true if the data in [byteArray] is a valid representation of an [AdbTransportMessage],
+         * else false.
+         */
         fun representsTransportMessage(byteArray: ByteArray): Boolean {
             val byteBuffer = ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN)
 
