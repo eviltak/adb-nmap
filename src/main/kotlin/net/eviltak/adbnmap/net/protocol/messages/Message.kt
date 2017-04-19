@@ -17,6 +17,10 @@
 
 package net.eviltak.adbnmap.net.protocol.messages
 
+/**
+ * Represents a message that can be sent to and from various devices via a
+ * [net.eviltak.adbnmap.net.protocol.Protocol].
+ */
 interface Message {
     /**
      * Encodes the message into a byte array.

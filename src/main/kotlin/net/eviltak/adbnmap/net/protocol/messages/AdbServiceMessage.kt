@@ -17,6 +17,10 @@
 
 package net.eviltak.adbnmap.net.protocol.messages
 
+/**
+ * Represents a message that is used for communication between an ADB client and an ADB server using the ADB
+ * services protocol.
+ */
 class AdbServiceMessage(val message: String) : Message {
     /**
      * Encodes the message into a byte array.
