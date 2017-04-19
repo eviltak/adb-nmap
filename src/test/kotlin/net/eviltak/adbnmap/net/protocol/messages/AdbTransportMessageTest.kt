@@ -17,5 +17,50 @@
 
 package net.eviltak.adbnmap.net.protocol.messages
 
-class AdbTransportMessageTest {
+import org.junit.Assert
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+
+@RunWith(Parameterized::class)
+class AdbTransportMessageTest(val message: AdbTransportMessage, val expectedByteArray: ByteArray) {
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters
+        fun data(): Collection<Array<Any>> {
+            return listOf(
+                    arrayOf(AdbTransportMessage(AdbTransportMessage.Command.CNXN, 0x01000000, 256 * 1024, ""),
+                            ByteBuffer.allocate(4 * 6).order(ByteOrder.LITTLE_ENDIAN)
+                                    .putInt(0x4e584e43)
+                                    .putInt(0x01000000)
+                                    .putInt(256 * 1024)
+                                    .putInt(0)
+                                    .putInt(0)
+                                    .putInt(0x4e584e43 xor -1)
+                                    .array()
+                    ),
+                    arrayOf(AdbTransportMessage(AdbTransportMessage.Command.WRTE, 15, 20, "some_payload"),
+                            ByteBuffer.allocate(4 * 6 + "some_payload".length).order(ByteOrder.LITTLE_ENDIAN)
+                                    .putInt(0x45545257)
+                                    .putInt(15)
+                                    .putInt(20)
+                                    .putInt("some_payload".length)
+                                    .putInt(0)
+                                    .putInt(0x45545257 xor -1)
+                                    .put("some_payload".toByteArray(Charsets.US_ASCII))
+                                    .array()
+                    )
+            )
+        }
+    }
+
+    @Test
+    fun toByteArrayTest() {
+        val messageByteArray = message.toByteArray()
+
+        Assert.assertTrue("toByteArray returned ${String(messageByteArray)}",
+                          messageByteArray contentEquals expectedByteArray)
+    }
 }
