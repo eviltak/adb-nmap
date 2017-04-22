@@ -19,17 +19,22 @@ package net.eviltak.adbnmap.net.protocol
 
 import net.eviltak.adbnmap.net.protocol.messages.AdbServiceMessage
 import java.net.Socket
+import java.net.SocketTimeoutException
 
 /**
  * The protocol used by the ADB client to communicate with the ADB server.
  */
 class AdbServicesProtocol(override val socket: Socket) : Protocol<AdbServiceMessage> {
+    companion object {
+        const val ADB_SERVER_PORT = 5037
+    }
+
     /**
      * Send a test message in this communication protocol to a host through the [socket], eliciting a response
      * from the target host confirming whether it supports this protocol or not.
      */
     override fun sendTestMessage() {
-        TODO()
+        sendMessage(AdbServiceMessage("host:version"))
     }
 
     /**
@@ -38,7 +43,22 @@ class AdbServicesProtocol(override val socket: Socket) : Protocol<AdbServiceMess
      * @return true if the connected host uses this protocol, false otherwise.
      */
     override fun hostUsesProtocol(): Boolean {
-        return false
+        sendTestMessage()
+
+        val inByteArray = ByteArray(128)
+
+        // We only read once because the response is guaranteed to not be larger than 128 bytes
+        try {
+            // TODO: Convert to modifiable option
+            socket.soTimeout = 500
+            socket.getInputStream().read(inByteArray)
+        }
+        catch (_: SocketTimeoutException) {
+            return false
+        }
+
+        // Check if OKAY was returned
+        return String(inByteArray.sliceArray(0..3), Charsets.US_ASCII) == "OKAY"
     }
 }
 
