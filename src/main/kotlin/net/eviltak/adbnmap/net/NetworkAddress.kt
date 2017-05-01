@@ -24,10 +24,3 @@ data class NetworkAddress(val ipAddress: InetAddress, val port: Int) {
         return InetSocketAddress(ipAddress, port)
     }
 }
-
-fun allPossibleAddressesFrom(ipAddresses: Iterable<InetAddress>,
-                             ports: Iterable<Int>): Iterable<NetworkAddress> {
-    return ipAddresses.flatMap { ipAddress ->
-        ports.map { port -> NetworkAddress(ipAddress, port) }
-    }
-}
