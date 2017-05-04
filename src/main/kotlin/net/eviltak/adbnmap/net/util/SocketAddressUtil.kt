@@ -17,9 +17,33 @@
 
 package net.eviltak.adbnmap.net.util
 
-import java.net.InetSocketAddress
-import java.net.SocketAddress
+import java.net.*
+
+fun isValidIpAddress(ipAddress: String): Boolean {
+    try {
+        val uri = URI("scheme://$ipAddress")
+
+        if (uri.host == null) {
+            throw URISyntaxException(uri.toString(), "Invalid IP Address")
+        }
+
+        return true
+    }
+    catch (_: URISyntaxException) {
+        return false
+    }
+}
 
 fun subnetAddresses(subnet: String, port: Int): Iterable<SocketAddress> {
-    return (0..255).asSequence().map { "$subnet.$it" }.map { InetSocketAddress(it, port) }.asIterable()
+    return (0..255)
+            .asSequence()
+            .map { "$subnet.$it" }
+            .map {
+                if (!isValidIpAddress(it)) {
+                    throw IllegalArgumentException("Invalid subnet \"$subnet\" passed")
+                }
+                InetSocketAddress(it, port)
+            }
+            .toList()
+            .asIterable()
 }

@@ -17,7 +17,7 @@
 
 package net.eviltak.adbnmap.net.util
 
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
@@ -39,10 +39,34 @@ class SocketAddressUtilTest {
             assertEquals(256, addressIndex)
         }
 
-        @Test
+        @Test(expected = IllegalArgumentException::class)
         fun invalidSubnetTest() {
-            // TODO: Complete test
-            print(subnetAddresses("1234", 555).iterator().next().toString())
+            // Should throw an IllegalArgumentException
+            subnetAddresses("1234", 555)
+        }
+    }
+
+    class IsValidIpAddress {
+        @Test
+        fun numberOfOctetsTest() {
+            // 4 octets (valid)
+            assertTrue(isValidIpAddress("23.23.23.23"))
+
+            // < 4 octets (invalid)
+            assertFalse(isValidIpAddress("23.23.23"))
+
+            // > 4 octets (invalid)
+            assertFalse(isValidIpAddress("23.23.23.23.23"))
+        }
+
+        @Test
+        fun octetValueTest() {
+            // All octets in range 0..255
+            assertTrue(isValidIpAddress("0.12.123.255"))
+
+            assertFalse(isValidIpAddress("23.23.23.256"))
+
+            assertFalse(isValidIpAddress("2345.23.23.256"))
         }
     }
 }
