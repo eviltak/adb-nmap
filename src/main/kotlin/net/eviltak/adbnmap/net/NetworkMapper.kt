@@ -26,10 +26,11 @@ import java.net.SocketAddress
  *
  * @param P The type of protocol devices are expected to use.
  *
- * @property protocolFromSocket Creates an instance of the protocol of type [P] from the socket to be used
+ * @property protocolFactory Creates an instance of the protocol of type [P] from the socket to be used
  * to connect to the host.
  */
-class NetworkMapper<out P: Protocol<*>>(val protocolFromSocket: (Socket) -> P) {
+class NetworkMapper<out P : Protocol<*>>(val socketConnector: SocketConnector,
+                                         val protocolFactory: (Socket) -> P) {
     /**
      * Pings the host at [socketAddress] if such a host exists to check whether it supports the
      * specified protocol.
@@ -38,29 +39,21 @@ class NetworkMapper<out P: Protocol<*>>(val protocolFromSocket: (Socket) -> P) {
      * @return True if the host at [socketAddress] exists and supports the specified protocol.
      */
     fun ping(socketAddress: SocketAddress): Boolean {
-        return Socket().use {
-            try {
-                // TODO: Refactor timeout to config class
-                it.connect(socketAddress, 500)
-                val protocol = protocolFromSocket(it)
-                protocol.hostUsesProtocol()
-            }
-            catch(_: Exception) {
-                false
-            }
+        return socketConnector.tryConnect(socketAddress) {
+            protocolFactory(it).hostUsesProtocol()
         }
     }
 
     /**
-     * Pings all hosts in [socketAddresses] and returns the address of all devices that support the
+     * Pings all hosts in [network] and returns the address of all devices that support the
      * protocol [P].
      *
-     * @param socketAddresses The addresses to check.
-     * @return A [List] containing the addresses of all devices in [socketAddresses] that support the
+     * @param network A collection of addresses representing the network.
+     * @return A [List] containing the addresses of all devices in [network] that support the
      * protocol [P].
      */
-    fun filterDevices(socketAddresses: Iterable<SocketAddress>): List<SocketAddress> {
-        return socketAddresses.filter { ping(it) }
+    fun getDevicesInNetwork(network: Iterable<SocketAddress>): List<SocketAddress> {
+        return network.filter { ping(it) }
     }
 }
 
