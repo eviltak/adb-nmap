@@ -20,6 +20,8 @@ package net.eviltak.adbnmap.net
 import net.eviltak.adbnmap.net.protocol.Protocol
 import java.net.Socket
 import java.net.SocketAddress
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
 /**
  * Scans networks for devices which use the specified protocol.
@@ -53,7 +55,10 @@ class NetworkMapper<out P : Protocol<*>>(val socketConnector: SocketConnector,
      * protocol [P].
      */
     fun getDevicesInNetwork(network: Iterable<SocketAddress>): List<SocketAddress> {
-        return network.filter { ping(it) }
+        val executor = Executors.newCachedThreadPool()
+        val futures = executor.invokeAll(network.map { Callable { if (ping(it)) it else null } })
+
+        return futures.map { it.get() }.filterNotNull()
     }
 }
 
